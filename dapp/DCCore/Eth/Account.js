@@ -54,7 +54,7 @@ export default class Account {
     Store.setItem(
       'ethwallet',
       JSON.stringify(
-        this.web3.eth.acco  unts.encrypt(account.privateKey, password)
+        this.web3.eth.accounts.encrypt(account.privateKey, password)
       )
     )
 
