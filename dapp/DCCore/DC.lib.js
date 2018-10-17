@@ -52,12 +52,17 @@ export default class DCLib {
    * @ignore
    */
   constructor (signal = false) {
-    console.log(
-      'asbjksajkbscajkbcasjksacjkncajknbcasjknbcsakjcakbjckjncasjkncajnackjnjnkc'
-    )
+    console.log('setting up DCLib')
     this.version = '0.2.2'
     this.config = _config
     this.network = process.env.DC_NETWORK
+
+    this.pending = {
+      start: new window.Event('pending_start'),
+      stop: new window.Event('pending_stop')
+    }
+
+    console.log(this.pending)
 
     if (window.location.hash === 'showcase.dao.casino') {
       window.Rollbar = rollbar.init({
@@ -155,8 +160,10 @@ export default class DCLib {
      * }
      */
     this.Account.info = async (address = false, callback = false) => {
+      document.dispatchEvent(window.DCLib.pending.start);
       if (!_ready) {
         console.warn('DClib initialization in progress... try later :) ')
+        document.dispatchEvent(window.DCLib.pending.stop);
         return
       }
 
@@ -181,6 +188,7 @@ export default class DCLib {
       }
 
       if (callback) callback(res)
+      document.dispatchEvent(window.DCLib.pending.stop);
       return res
     }
   }

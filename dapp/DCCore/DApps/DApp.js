@@ -164,6 +164,7 @@ export default class DApp {
    * @return {[type]}
    */
   async connect (params = {}, callback = false) {
+    document.dispatchEvent(window.DCLib.pending.start);
     if (this.debug) Utils.debugLog('DApp %c' + this.slug + ' %cconnecting...', 'color:orange', 'color:default', _config.loglevel)
 
     let def_params = { bankroller: 'auto' }
@@ -242,6 +243,7 @@ export default class DApp {
     } catch (e) {
       this.Status.emit('error', { code: 'unknow', 'text': 'Connection error', err: e })
       Utils.debugLog([' 🚬 Connection error...', e], 'error')
+      document.dispatchEvent(window.DCLib.pending.stop);
       return callback(connectionResult, null)
     }
 
@@ -277,14 +279,15 @@ export default class DApp {
     if (this.debug) Utils.debugLog([' 🔐 Open channel with deposit', params.deposit], _config.loglevel)
 
     return new Promise(async (resolve, reject) => {
+      document.dispatchEvent(window.DCLib.pending.start);
       let contract_address
       this.contract_address
         ? contract_address = this.contract_address
         : contract_address = params.contract.address
-        console.log(1111111111,Account.get().openkey)
+        console.log('# Open key',Account.get().openkey)
       // Check user balance
       const user_balance = await Eth.getBalances(Account.get().openkey)
-      console.log(22222,user_balance)
+      console.log('# User Balance',user_balance)
       const mineth = 0.01
       const minbet = Utils.dec2bet(params.deposit)
 
@@ -299,7 +302,7 @@ export default class DApp {
         reject(new Error({ error: 'low balance' }))
         return false
       }
-      console.log(222222,Account.get())
+      console.log('# Account status',Account.get())
       // Approve ERC20
       this.Status.emit('connect::info', { status: 'ERC20approve', data: {} })
       const our_allow = await Eth.ERC20.methods.allowance(Account.get().openkey, contract_address).call()
@@ -320,7 +323,7 @@ export default class DApp {
         action : 'open_channel',
         args   : args
       })
-console.log(33333333,Account.get())
+console.log('# Account status',Account.get())
       // проверяем что банкроллер прислал корректный депозит
       if (this.rules.depositX * args.player_deposit > b_args.args.bankroller_deposit) {
         console.error('invalid bankroller deposit')
@@ -454,6 +457,7 @@ console.log(33333333,Account.get())
           console.error(err)
           reject(err)
         })
+        document.dispatchEvent(window.DCLib.pending.stop);
     })
   }
 
@@ -934,6 +938,7 @@ console.log(33333333,Account.get())
     }, 8000)
 
     return new Promise((resolve, reject) => {
+      document.dispatchEvent(window.DCLib.pending.start);
       const checkBankroller = data => {
         this.Status.emit('connect::info', {
           status: 'bankrollerInfo',
@@ -942,10 +947,12 @@ console.log(33333333,Account.get())
         console.log(data)
 
         if (deposit && data.deposit < deposit) {
+          document.dispatchEvent(window.DCLib.pending.stop);
           return
         }
 
         // return bankroller openkey
+        document.dispatchEvent(window.DCLib.pending.stop);
         resolve(data.user_id)
         clearTimeout(noBankroller)
         this.sharedRoom.off('action::bankroller_active', checkBankroller)
