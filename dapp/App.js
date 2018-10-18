@@ -6,19 +6,24 @@ import {
 import './App.css';
 import LotteryGame from './LotteryGame';
 import Main from './Main';
-import DCLib from './DCCore/index.js'
-import dappLogicInit from './dapp.logic.js'
+import DCLib from './DCCore/index.js';
+import dappLogicInit from './dapp.logic.js';
+
 
 class App extends Component {
   constructor() {
     super();
-    this.state = {}
+    this.state = {
+      pending:false
+    }
   }
 
+  
+
   componentDidMount () {
-    console.log(DCLib);
+    console.log('# DCLib',DCLib);
     DCLib.on('ready', function () {
-      console.log('HAAHAHA')
+      console.log('# DCLib loaded succesfully')
       dappLogicInit(DCLib, 'split_cash-lottery');
       DCLib.Account.create('0x86d9aa178516422f85ee2e30d6ba3d066d3c73abfa7f84e095051916d5d3ff4f','1234')
       DCLib.Account.initAccount(()=>{

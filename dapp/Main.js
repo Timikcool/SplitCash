@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Loader} from 'react-loaders';
 import { withRouter } from 'react-router-dom';
 import lottery from './img/lottery.png'
 import circle from './img/icons8-рулетка-100.png'
@@ -13,6 +14,24 @@ import {
 } from 'reactstrap';
 
 export default class Main extends Component {
+	constructor() {
+		super();
+		this.state = {
+		  pending:false
+		}
+	  }
+
+	componentWillMount(){
+		document.addEventListener('pending_start',()=>{
+		  this.setState({...this.state, pending: true})
+		  console.log('start pending')
+		})
+	
+		document.addEventListener('pending_stop',()=>{
+		  this.setState({...this.state, pending: false})
+		  console.log('stop pending')
+		})
+	  }
 	startGame (deposit) {
 		console.log('DEPOSIT',deposit);
 		window.Lottery.connect(
@@ -45,6 +64,7 @@ export default class Main extends Component {
 	render() {
 		return (
 			<React.Fragment>
+				<Loader type="line-scale" active={this.state.pending}></Loader>
 				<Row className="header-container">
 					<Navbar className="header">
 						<div className="brand" href="/">Split<span>Cash</span></div>
