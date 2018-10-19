@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Button} from 'reactstrap';
+import {Button, Modal, ModalBody} from 'reactstrap';
 import './lottery-game.css';
 import Loader from 'react-loaders';
 export default class LotteryGame extends Component {
@@ -8,6 +8,7 @@ export default class LotteryGame extends Component {
 		this.state = {
 			bet : 1,
 			pending:false,
+			accInfo: null,
 			choice: null,
 			balance: null
 		}
@@ -25,11 +26,15 @@ export default class LotteryGame extends Component {
 		})
 	  }
 
+		componentDidMount(){
+			this.setState({...this.state, accInfo: window.DCLib.Account._ERC20._address})
+		}
 	handleClick(e) {
 		const userChoice = parseInt(e.target.id.substr(-1));
-		document.querySelector('.choice-row .active') ? document.querySelector('.choice-row .active').classList.remove('active') : console.log('#user choice',userChoice);
+		document.querySelector('.choice-row .active') ? document.querySelector('.choice-row .active').classList.remove('active') : console.log('first user choice',userChoice);
 		document.querySelector(`#choice_${userChoice}`).classList.toggle('active');
 		this.setState({...this.state, choice:userChoice});
+		console.log('user choice', userChoice);
 	}
 
 	makeRoll = (...args) => {
@@ -39,7 +44,7 @@ export default class LotteryGame extends Component {
 		  gamedata: [0]
 		})
 		console.log(random_hash)
-		 window.Lottery.Game(this.state.bet, [0, 1], random_hash).then(function (result) {
+		 window.Lottery.Game(this.state.bet, [0, this.state.choice], random_hash).then(function (result) {
 		   console.log('result', result);
 		 })
 	  }
@@ -51,18 +56,17 @@ export default class LotteryGame extends Component {
 					<ModalBody>Please wait...</ModalBody>
 				</Modal>
 			<div className="lottery-game-container">
-				<h3>Lottery</h3>
+				<h3>Choose your lucky number!</h3>
 				<div className="ticket">
 					<h5>The Ticket</h5>
+					<h6>{this.state.accInfo}</h6>
 					<div className="choice-row">
-						<span id="choice_1" onClick={e => this.handleClick(e)}>⬤</span>
-						<span id="choice_2" onClick={e => this.handleClick(e)}>⬤</span>
-						<span id="choice_3" onClick={e => this.handleClick(e)}>⬤</span>
-					</div>
-					<div className="choice-row">
-						<span id="choice_4" onClick={e => this.handleClick(e)}>⬤</span>
-						<span id="choice_5" onClick={e => this.handleClick(e)}>⬤</span>
-						<span id="choice_6" onClick={e => this.handleClick(e)}>⬤</span>
+						<span id="choice_1" onClick={e => this.handleClick(e)}>①</span>
+						<span id="choice_2" onClick={e => this.handleClick(e)}>②</span>
+						<span id="choice_3" onClick={e => this.handleClick(e)}>③</span>
+						<span id="choice_4" onClick={e => this.handleClick(e)}>④</span>
+						<span id="choice_5" onClick={e => this.handleClick(e)}>⑤</span>
+						<span id="choice_6" onClick={e => this.handleClick(e)}>⑥</span>
 					</div>
 				</div>
 			</div>
