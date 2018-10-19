@@ -1,15 +1,29 @@
 import React, { Component } from 'react'
 import {Button} from 'reactstrap';
 import './lottery-game.css';
+import Loader from 'react-loaders';
 export default class LotteryGame extends Component {
 	constructor(){
 		super();
 		this.state = {
 			bet : 1,
+			pending:false,
 			choice: null,
 			balance: null
 		}
 	}
+
+	componentWillMount(){
+		document.addEventListener('pending_start',()=>{
+		  this.setState({...this.state, pending: true})
+		  console.log('start pending')
+		})
+	
+		document.addEventListener('pending_stop',()=>{
+		  this.setState({...this.state, pending: false})
+		  console.log('stop pending')
+		})
+	  }
 
 	handleClick(e) {
 		const userChoice = parseInt(e.target.id.substr(-1));
@@ -20,7 +34,6 @@ export default class LotteryGame extends Component {
 
 	makeRoll = (...args) => {
 		console.log(this.state);
-		console.log(...{ name: 1, hui: 2 })
 		const random_hash = DCLib.randomHash({
 		  bet: this.state.bet,
 		  gamedata: [0]
@@ -31,15 +44,12 @@ export default class LotteryGame extends Component {
 		 })
 	  }
 
-	handleBetChange(e) {
-		const value = e.target.value;
-		console.log(value);
-		this.setState({bet:value});
-	}
-
 	render() {
 		return (
 			<React.Fragment>
+			<Modal isOpen={this.state.pending} backdrop="static">
+					<ModalBody>Please wait...</ModalBody>
+				</Modal>
 			<div className="lottery-game-container">
 				<h3>Lottery</h3>
 				<div className="ticket">
@@ -57,9 +67,7 @@ export default class LotteryGame extends Component {
 				</div>
 			</div>
 			<div className="user-bet-container">
-				<label className="bet">{this.state.bet}</label>
-				<input type="range" min="1" step="1" max="10" onChange={(e) => this.handleBetChange(e)} />
-				<Button color="danger" className="bet-btn" onClick={e => this.makeRoll(e)}>BET!</Button>
+				<Button color="danger" className="bet-btn" onClick={e => this.makeRoll(e)}>GO!</Button>
 			</div>
 			</React.Fragment>
 		)

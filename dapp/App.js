@@ -19,6 +19,7 @@ class App extends Component {
   }
 
   
+  //now just creating simple custom account
 
   componentDidMount () {
     console.log('# DCLib',DCLib);
@@ -34,14 +35,6 @@ class App extends Component {
               }
           })
       });
-       
-      //   DCLib.Account.create(function () {
-      //     console.log(2222222)
-      //     window.Lottery = new DCLib.DApp({
-      //         slug: 'split_cash-lottery'
-      //     })
-      //     console.log(111111111,window.Lottery)
-      // })
     })
   }
 
@@ -53,12 +46,6 @@ class App extends Component {
       gamedata: [...args]
     })
     console.log(random_hash)
-    // window.Dice.Game(user_bet, user_num, random_hash).then(function (result) {
-    //   console.log('result', result)
-    //   this.renderGames()
-    //   var ubets = window.Dice.Game.payChannel.getBalance()
-    //   // $('#user_bet').max = ubets
-    // })
   }
   endGame = () => {
     window.Lottery.disconnect(function (res) {
